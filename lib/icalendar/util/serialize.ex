@@ -44,9 +44,13 @@ defmodule ICalendar.Util.RRULE do
       :error      -> nil
     end
   end
-  defp serialize_value(:count, value), do: value
+  defp serialize_value(:count, value) when not is_nil(value) do
+    Integer.to_string(value)
+  end
   defp serialize_value(:until, value), do: ICalendar.Value.to_ics(value)
-  defp serialize_value(:interval, value), do: value
+  defp serialize_value(:interval, value) when not is_nil(value) do
+    Integer.to_string(value)
+  end
   defp serialize_value(:by_second, value) when is_list(value) do
     case Enum.count(value) do
       0 -> nil
@@ -123,7 +127,7 @@ defmodule ICalendar.Util.RRULE do
       :error     -> nil
     end
   end
-  defp serialize_value(_, val), do: val
+  defp serialize_value(_, value), do: value
 
   defp serialize_key(key, keys) do
     case Map.fetch(keys, key) do
