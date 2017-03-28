@@ -14,9 +14,20 @@ defimpl Value, for: ICalendar.RRULE do
     rrule
     |> Map.from_struct
     |> Map.keys
+    |> order_conventionally
     |> Enum.map(&(Util.serialize(rrule, &1)))
     |> Enum.reject(&(&1 == nil))
     |> Enum.join(";")
+  end
+
+  # some clients rely on FREQ coming first, COUNT or UNTIL next, then others
+  # even though against spec (http://www.kanzaki.com/docs/ical/recur.html#descr)
+  # Apple Calendar, I'm looking at you
+  defp order_conventionally(keys) do
+    first_keys = [:frequency, :count, :until, :interval]
+    last_keys = keys -- first_keys
+
+    first_keys ++ last_keys
   end
 end
 
@@ -76,7 +87,6 @@ defimpl Value, for: Tuple do
   end
 
   def to_ics(x), do: x
-
 end
 
 defimpl Value, for: DateTime do
