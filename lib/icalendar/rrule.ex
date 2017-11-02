@@ -157,8 +157,8 @@ defmodule ICalendar.RRULE do
     end)
     |> Enum.map(&validate_param/1)
     |> Enum.reduce(%ICalendar.RRULE{}, &parse_attr/2)
-    |> validate
-    |> respond
+    |> validate()
+    |> respond()
   end
 
   def respond(rule = %ICalendar.RRULE{}) do
