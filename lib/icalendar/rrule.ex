@@ -100,6 +100,7 @@ defmodule ICalendar.RRULE do
   def string_to_atom_keys, do: @string_to_atom_keys
   def string_to_atom_keys(:inverted), do: _atom_to_string_keys()
 
+
   @doc ~S"""
   Produces a list of valid RRULE frequencies and their %ICalendar.RRULE{}
   counterparts.
@@ -107,12 +108,14 @@ defmodule ICalendar.RRULE do
   def frequencies, do: @frequencies
   def frequencies(:inverted), do: _inverted_frequencies()
 
+
   @doc ~S"""
   Produces a list of valid RRULE days and their %ICalendar.RRULE{}
   counterparts.
   """
   def days, do: @days
   def days(:inverted), do: _inverted_days()
+
 
   @doc ~S"""
   This function is used to determine whether an RRULE struct has errors or not
@@ -159,6 +162,7 @@ defmodule ICalendar.RRULE do
     |> Enum.reduce(%ICalendar.RRULE{}, &parse_attr/2)
     |> validate()
     |> respond()
+
   end
 
   def respond(rule = %ICalendar.RRULE{}) do

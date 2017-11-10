@@ -48,6 +48,30 @@ defmodule ICalendar.DeserializeTest do
       assert event.dtstart.time_zone == "America/Chicago"
       assert event.dtend.time_zone == "America/Chicago"
     end
+    
+    test "with RRULE" do
+      rrule = [
+        "FREQ=DAILY",
+        "UNTIL=22221224T084500Z",
+        "BYMONTHDAY=1,3,5",
+        "BYDAY=TU,FR",
+        "BYMONTH=4"
+      ] |> Enum.join(";")
+
+      ics = """
+      BEGIN:VEVENT
+      RRULE:#{rrule}
+      END:VEVENT
+      """
+
+      {:ok, event} = ICalendar.from_ics(ics)
+      assert event.rrule.by_day == [:tuesday, :friday]
+      assert event.rrule.by_month == [:april]
+      assert event.rrule.by_month_day == [1, 3, 5]
+      assert event.rrule.frequency == :daily
+      assert event.rrule.until ==
+        Timex.to_datetime({{2222, 12, 24}, {8, 45, 0}}, "Etc/UTC")
+    end
 
     test "with CR+LF line endings" do
       ics = """

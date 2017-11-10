@@ -95,4 +95,5 @@ defmodule ICalendar.EventTest do
     END:VEVENT
     """
   end
+
 end

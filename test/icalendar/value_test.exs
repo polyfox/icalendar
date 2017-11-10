@@ -58,8 +58,6 @@ defmodule ICalendar.ValueTest do
     }
     result = Value.to_ics(rrule)
     assert result == [
-      "FREQ=YEARLY",
-      "UNTIL=20221012T153000",
       "BYDAY=MO,WE,FR",
       "BYHOUR=12,13,14",
       "BYMINUTE=1,3,5",
@@ -68,6 +66,8 @@ defmodule ICalendar.ValueTest do
       "BYSECOND=1,3,5",
       "BYWEEKNO=25,35,45",
       "BYYEARDAY=50,75,150",
+      "FREQ=YEARLY",
+      "UNTIL=20221012T153000",
       "WKST=MO"
     ] |> Enum.join(";")
   end
