@@ -122,6 +122,36 @@ defmodule ICalendar.Util.Deserialize do
         %{acc | errors: ["RRULE: #{term}" | acc.errors]}
     end
   end
+  def parse_attr(
+    %Property{key: "COMMENT", value: comment},
+    acc
+  ) do
+    %{acc | comment: desanitized(comment)}
+  end
+  def parse_attr(
+    %Property{key: "STATUS", value: status},
+    acc
+  ) do
+    %{acc | status: status |> desanitized() |> String.downcase()}
+  end
+  def parse_attr(
+    %Property{key: "CATEGORIES", value: categories},
+    acc
+  ) do
+    %{acc | categories: String.split(desanitized(categories), ",")}
+  end
+  def parse_attr(
+    %Property{key: "CLASS", value: class},
+    acc
+  ) do
+    %{acc | class: class |> desanitized() |> String.downcase()}
+  end
+  def parse_attr(
+    %Property{key: "GEO", value: geo},
+    acc
+  ) do
+    %{acc | geo: to_geo(geo)}
+  end
   def parse_attr(_, acc), do: acc
 
   @doc ~S"""
@@ -139,10 +169,10 @@ defmodule ICalendar.Util.Deserialize do
       ...> Timex.to_erl(date)
       {{3993, 4, 7}, {15, 30, 22}}
 
-  And should return nil for incorrect dates:
+  And should return error for incorrect dates:
 
       iex> ICalendar.Util.Deserialize.to_date("1993/04/07")
-      {:error, "Expected `1-2 digit month` at line 1, column 5."}
+      {:error, "Expected `2 digit month` at line 1, column 5."}
 
   It should handle timezones from  the Olson Database:
 
@@ -167,6 +197,15 @@ defmodule ICalendar.Util.Deserialize do
 
   def to_date(date_string) do
     to_date(date_string, %{"TZID" => "Etc/UTC"})
+  end
+
+  defp to_geo(geo) do
+    geo
+    |> desanitized()
+    |> String.split(";")
+    |> Enum.map(fn x -> Float.parse(x) end)
+    |> Enum.map(fn {x, _} -> x end)
+    |> List.to_tuple()
   end
 
   @doc ~S"""

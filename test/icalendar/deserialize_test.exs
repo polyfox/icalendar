@@ -9,10 +9,15 @@ defmodule ICalendar.DeserializeTest do
       ics = """
       BEGIN:VEVENT
       DESCRIPTION:Escape from the world. Stare at some water.
+      COMMENT:Don't forget to take something to eat !
       SUMMARY:Going fishing
       DTEND:20151224T084500Z
       DTSTART:20151224T083000Z
       LOCATION:123 Fun Street\\, Toronto ON\\, Canada
+      STATUS:TENTATIVE
+      CATEGORIES:Fishing,Nature
+      CLASS:PRIVATE
+      GEO:43.6978819;-79.3810277
       END:VEVENT
       """
       event = ICalendar.from_ics(ics)
@@ -21,7 +26,12 @@ defmodule ICalendar.DeserializeTest do
         dtend: Timex.to_datetime({{2015, 12, 24}, {8, 45, 0}}),
         summary: "Going fishing",
         description: "Escape from the world. Stare at some water.",
-        location: "123 Fun Street, Toronto ON, Canada"
+        location: "123 Fun Street, Toronto ON, Canada",
+        status: "tentative",
+        categories: ["Fishing", "Nature"],
+        comment: "Don't forget to take something to eat !",
+        class: "private",
+        geo: {43.6978819, -79.3810277}
       }}
     end
 
@@ -47,30 +57,6 @@ defmodule ICalendar.DeserializeTest do
       {:ok, event} = ICalendar.from_ics(ics)
       assert event.dtstart.time_zone == "America/Chicago"
       assert event.dtend.time_zone == "America/Chicago"
-    end
-    
-    test "with RRULE" do
-      rrule = [
-        "FREQ=DAILY",
-        "UNTIL=22221224T084500Z",
-        "BYMONTHDAY=1,3,5",
-        "BYDAY=TU,FR",
-        "BYMONTH=4"
-      ] |> Enum.join(";")
-
-      ics = """
-      BEGIN:VEVENT
-      RRULE:#{rrule}
-      END:VEVENT
-      """
-
-      {:ok, event} = ICalendar.from_ics(ics)
-      assert event.rrule.by_day == [:tuesday, :friday]
-      assert event.rrule.by_month == [:april]
-      assert event.rrule.by_month_day == [1, 3, 5]
-      assert event.rrule.frequency == :daily
-      assert event.rrule.until ==
-        Timex.to_datetime({{2222, 12, 24}, {8, 45, 0}}, "Etc/UTC")
     end
 
     test "with CR+LF line endings" do

@@ -8,8 +8,14 @@ defmodule ICalendar.Event do
             dtend:       nil,
             description: nil,
             location:    nil,
-            rrule:       nil,
             url:         nil,
+            uid:         nil,
+            status:      nil,
+            categories:  nil,
+            class:       nil,
+            comment:     nil,
+            geo:         nil,
+            rrule:       nil,
             errors:      []
 
   def valid(%ICalendar.Event{errors: []}), do: true
