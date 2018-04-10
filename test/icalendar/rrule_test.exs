@@ -23,6 +23,8 @@ defmodule ICalendar.RRULETest do
         {"BYSETPOS=5",         %RRULE{by_set_pos: [5]}},
         {"FREQ=DAILY;COUNT=5", %RRULE{count: 5, frequency: :daily}},
         {"BYDAY=MO",           %RRULE{by_day: [:monday]}},
+        {"BYDAY=1SU",          %RRULE{by_day: [{1, :sunday}]}},
+        {"BYDAY=-1SA",          %RRULE{by_day: [{-1, :saturday}]}},
         {"BYDAY=MO,TU,SA",     %RRULE{by_day: [:monday, :tuesday, :saturday]}},
         {"WKST=MO",            %RRULE{week_start: :monday}},
         {"x-name=lorem",       %RRULE{x_name: "lorem"}}
